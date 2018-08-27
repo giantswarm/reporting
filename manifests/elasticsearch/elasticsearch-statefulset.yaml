@@ -1,0 +1,110 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: elasticsearch
+  namespace: reporter-elasticsearch
+  labels:
+    app: elasticsearch
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: elasticsearch
+  labels:
+    app: elasticsearch
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - "services"
+  - "namespaces"
+  - "endpoints"
+  verbs:
+  - "get"
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  namespace: reporter-elasticsearch
+  name: elasticsearch
+  labels:
+    app: elasticsearch
+subjects:
+- kind: ServiceAccount
+  name: elasticsearch
+  namespace: reporter-elasticsearch
+  apiGroup: ""
+roleRef:
+  kind: ClusterRole
+  name: elasticsearch
+  apiGroup: ""
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: elasticsearch
+  namespace: reporter-elasticsearch
+  labels:
+    app: elasticsearch
+spec:
+  serviceName: elasticsearch
+  replicas: 1
+  selector:
+    matchLabels:
+      app: elasticsearch
+  template:
+    metadata:
+      labels:
+        app: elasticsearch
+    spec:
+      serviceAccountName: elasticsearch
+      containers:
+      - image: k8s.gcr.io/elasticsearch:v6.2.5
+        # to test if version exists goto
+        # https://k8s.gcr.io/v2/elasticsearch/manifests/v6.2.5
+        name: elasticsearch
+        resources:
+          # need more cpu upon initialization, therefore burstable class
+          limits:
+            cpu: 1000m
+          requests:
+            cpu: 100m
+        ports:
+        - containerPort: 9200
+          name: db
+          protocol: TCP
+        - containerPort: 9300
+          name: transport
+          protocol: TCP
+        volumeMounts:
+        - name: data
+          mountPath: /data
+        - name: config
+          mountPath: /usr/share/elasticsearch/elasticsearch.yml
+          subPath: elasticsearch.yml
+        env:
+        - name: "NAMESPACE"
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: "MINIMUM_MASTER_NODES"
+          value: "1"
+        - name: "ELASTICSEARCH_SERVICE_NAME"
+          value: "elasticsearch"
+        # - name: "DISCOVERY_SERVICE"
+        #   value: "elasticsearch"
+      volumes:
+      - name: data
+        emptyDir: {}
+      - name: config
+        configMap:
+          name: elasticsearch
+      # Elasticsearch requires vm.max_map_count to be at least 262144.
+      # If your OS already sets up this number to a higher value, feel free
+      # to remove this init container.
+      initContainers:
+      - image: alpine:3.6
+        command: ["/sbin/sysctl", "-w", "vm.max_map_count=262144"]
+        name: elasticsearch-logging-init
+        securityContext:
+          privileged: true

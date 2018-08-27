@@ -1,0 +1,80 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: reporter
+  namespace: giantswarm-reporter
+spec:
+  backoffLimit: 4
+  template:
+    spec:
+      serviceAccountName: reporter
+      restartPolicy: Never
+      containers:
+      - name: reporter
+        image: k8s.gcr.io/hyperkube:v1.10.6
+        args:
+        - sh
+        - -c
+        - |
+          apt update && apt install -y curl
+          BASIC_AUTH=$(cat /etc/auth/basic-auth | tr -d '\n')
+
+          # .roles |= if type == "array" then join(",") else . end
+
+          kubectl get --all-namespaces --export --output=json "$RESOURCE_TYPES" | jq -c '.' | while IFS= read -r line; do
+            echo "$line" | curl \
+              --insecure --basic --ssl-reqd --user "$BASIC_AUTH" \
+              --request POST --header 'Content-Type: application/json' \
+              --data @- "$ELASTICSEARCH_INDEX_URL" \
+                | jq '.'
+            echo
+          done
+
+          # WORKS
+          # kubectl get --all-namespaces --export --output=json "$RESOURCE_TYPES" | jq -c '.items[]' | while IFS= read -r line; do
+          #   echo "$line" | curl \
+          #     --fail --silent --show-error \
+          #     --insecure --basic --ssl-reqd --user "$BASIC_AUTH" \
+          #     --request POST --header 'Content-Type: application/json' \
+          #     --data @- "$ELASTICSEARCH_INDEX_URL" \
+          #       | jq '.'
+          #   echo
+          # done
+
+
+          # kubectl get --all-namespaces --export --output=json "$RESOURCE_TYPES" \
+          #   | jq -c '.' \
+          #   | curl \
+          #     --insecure --basic --ssl-reqd --user "foo:oink" \
+          #     --request POST --header 'Content-Type: application/json' \
+          #     --data @- "$ELASTICSEARCH_INDEX_URL"
+
+              # --fail --silent --show-error \
+          # | jq -c '.' \ ?
+          # --watch ?
+
+        env:
+        - name: ELASTICSEARCH_INDEX_URL
+          value: https://elasticsearch.kv7z5.k8s.godsmack.westeurope.azure.gigantic.io/test3/_doc
+        # - name: RESOURCE_TYPES
+        #   value: clusterrolebindings,clusterroles,componentstatuses,cronjobs,customresourcedefinition,daemonsets,deployments,endpoints,horizontalpodautoscalers,ingresses,jobs,limitranges,namespaces,networkpolicies,nodes,persistentvolumeclaims,persistentvolumes,poddisruptionbudgets,podpreset,pods,podsecuritypolicies,podtemplates,replicasets,replicationcontrollers,resourcequotas,rolebindings,roles,serviceaccounts,services,statefulsets,storageclasses
+        # - name: RESOURCE_TYPES
+        #   value: daemonsets,deployments,ingresses,jobs,namespaces,nodes,pods,replicasets,replicationcontrollers,services,statefulsets
+        # - name: RESOURCE_TYPES
+        #   value: daemonsets,deployments,ingresses,namespaces,nodes,pods,replicasets,services,statefulsets
+        - name: RESOURCE_TYPES
+          value: daemonsets,deployments,ingresses,namespaces,pods,replicasets,services,statefulsets
+        # - name: RESOURCE_TYPES
+        #   value: pods
+        # - name: WATCH
+        #   value: true/false
+        volumeMounts:
+        - name: auth
+          mountPath: "/etc/auth"
+          readOnly: true
+      volumes:
+      - name: auth
+        secret:
+          secretName: elasticsearch-basic-auth
+
+# Add serviceaccount with read-only rights
