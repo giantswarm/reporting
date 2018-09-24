@@ -1,11 +1,14 @@
+---
+# Source: reporting/templates/elasticstack/elasticsearch-service.yaml
 apiVersion: v1
 kind: Service
 metadata:
   name: elasticsearch
-  namespace: reporter-elasticsearch
+  namespace: reporting-elasticstack
   labels:
     app: elasticsearch
 spec:
+  type: NodePort
   ports:
   - name: db
     port: 9200

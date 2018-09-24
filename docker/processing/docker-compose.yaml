@@ -1,0 +1,12 @@
+version: '2'
+
+services:
+  app:
+    build: .
+    command: python process1.py
+    environment:
+      - ELASTICSEARCH_INDEX_URL=http://x/test3
+    volumes:
+      - .:/usr/src/app
+
+# sudo docker-compose run -e ELASTICSEARCH_INDEX_URL="$elasticsearch_url" app

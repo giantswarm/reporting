@@ -1,0 +1,25 @@
+---
+# Source: reporting/templates/processing/cronjob.yaml
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: processing
+  namespace: reporting-processing
+spec:
+  schedule: "*/1 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          # serviceAccountName: reporter
+          restartPolicy: Never
+          containers:
+          - name: processing
+            image: local/reporting-processing:test1
+            env:
+            - name: ELASTICSEARCH_INDEX_URL_AGENT
+              # value: https://elasticsearch.kv7z5.k8s.godsmack.westeurope.azure.gigantic.io/test3/_doc
+              value: http://elasticsearch.reporting-elasticstack.svc:9200/agent-test1
+            - name: ELASTICSEARCH_INDEX_URL_PROCESSING
+              # value: https://elasticsearch.kv7z5.k8s.godsmack.westeurope.azure.gigantic.io/test3/_doc
+              value: http://elasticsearch.reporting-elasticstack.svc:9200/processing-test1

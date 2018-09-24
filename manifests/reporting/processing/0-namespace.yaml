@@ -1,0 +1,6 @@
+---
+# Source: reporting/templates/processing/0-namespace.yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: reporting-processing

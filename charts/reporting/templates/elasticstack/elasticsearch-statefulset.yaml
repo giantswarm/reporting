@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: elasticsearch
-  namespace: reporter-elasticsearch
+  namespace: {{ .Values.elasticstack.namespace }}
   labels:
     app: elasticsearch
 ---
@@ -10,6 +10,7 @@ kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: elasticsearch
+  namespace: {{ .Values.elasticstack.namespace }}
   labels:
     app: elasticsearch
 rules:
@@ -25,14 +26,14 @@ rules:
 kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
-  namespace: reporter-elasticsearch
+  namespace: {{ .Values.elasticstack.namespace }}
   name: elasticsearch
   labels:
     app: elasticsearch
 subjects:
 - kind: ServiceAccount
   name: elasticsearch
-  namespace: reporter-elasticsearch
+  namespace: {{ .Values.elasticstack.namespace }}
   apiGroup: ""
 roleRef:
   kind: ClusterRole
@@ -43,7 +44,7 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: elasticsearch
-  namespace: reporter-elasticsearch
+  namespace: {{ .Values.elasticstack.namespace }}
   labels:
     app: elasticsearch
 spec:
@@ -59,7 +60,8 @@ spec:
     spec:
       serviceAccountName: elasticsearch
       containers:
-      - image: k8s.gcr.io/elasticsearch:v6.2.5
+      - image: docker.elastic.co/elasticsearch/elasticsearch-oss:6.4.0
+      # - image: k8s.gcr.io/elasticsearch:v6.2.5
         # to test if version exists goto
         # https://k8s.gcr.io/v2/elasticsearch/manifests/v6.2.5
         name: elasticsearch

@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: elasticsearch
-  namespace: reporter-elasticsearch
+  namespace: {{ .Values.elasticstack.namespace }}
 data:
   elasticsearch.yml: |
     cluster.name: reporter-elasticsearch

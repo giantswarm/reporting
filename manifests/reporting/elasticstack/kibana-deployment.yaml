@@ -1,8 +1,10 @@
+---
+# Source: reporting/templates/elasticstack/kibana-deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: kibana
-  namespace: reporter-elasticsearch
+  namespace: reporting-elasticstack
   labels:
     app: kibana
 spec:
@@ -19,7 +21,7 @@ spec:
     spec:
       containers:
       - name: kibana
-        image: docker.elastic.co/kibana/kibana-oss:6.2.4
+        image: docker.elastic.co/kibana/kibana-oss:6.4.0
         resources:
           # need more cpu upon initialization, therefore burstable class
           limits:

@@ -1,11 +1,14 @@
+---
+# Source: reporting/templates/elasticstack/kibana-service.yaml
 apiVersion: v1
 kind: Service
 metadata:
   name: kibana
-  namespace: reporter-elasticsearch
+  namespace: reporting-elasticstack
   labels:
     app: kibana
 spec:
+  type: NodePort
   ports:
   - name: ui
     port: 5601

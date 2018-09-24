@@ -1,0 +1,26 @@
+---
+# Source: reporting/templates/elasticstack/elasticsearch-configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: elasticsearch
+  namespace: reporting-elasticstack
+data:
+  elasticsearch.yml: |
+    cluster.name: reporter-elasticsearch
+    node.name: ${NODE_NAME}
+    node.master: ${NODE_MASTER}
+    node.data: ${NODE_DATA}
+    # path.data: /usr/share/elasticsearch/data
+    path.data: /data
+    http:
+      host: 0.0.0.0
+      port: 9200
+    bootstrap.memory_lock: true
+    transport.host: 127.0.0.1
+    discovery.zen.minimum_master_nodes: ${MINIMUM_MASTER_NODES}
+    discovery.zen.ping.unicast.hosts: ${DISCOVERY_SERVICE}
+
+    # transport.tcp.port: ${TRANSPORT_PORT}
+    # http.port: ${HTTP_PORT}
+    network.host: 0.0.0.0
