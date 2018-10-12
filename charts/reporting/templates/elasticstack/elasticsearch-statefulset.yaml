@@ -1,3 +1,4 @@
+{{ if .Values.elasticstack -}}
 apiVersion: v1
 kind: ServiceAccount
 metadata:
@@ -110,3 +111,4 @@ spec:
         name: elasticsearch-logging-init
         securityContext:
           privileged: true
+{{- end}}

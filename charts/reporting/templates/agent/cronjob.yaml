@@ -13,7 +13,8 @@ spec:
           restartPolicy: Never
           containers:
           - name: reporter
-            image: k8s.gcr.io/hyperkube:v1.11.3
+            # image: k8s.gcr.io/hyperkube:v1.11.3
+            image: {{ .Values.processing.image }}
             args:
             - sh
             - -c
@@ -26,18 +27,18 @@ spec:
 
               kubectl get --all-namespaces --export --output=json "$RESOURCE_TYPES" | jq -c '.' | while IFS= read -r line; do
 
-                echo "$line" > post-data
-                wget \
-                  --server-response \
-                  --header="Content-Type: application/json" \
-                  --post-file "post-data" \
-                  http://server:8080/application2/params2
+                # echo "$line" > post-data
+                # wget \
+                #   --server-response \
+                #   --header="Content-Type: application/json" \
+                #   --post-file "post-data" \
+                #   http://server:8080/application2/params2
 
-                # echo "$line" | curl \
-                #   --insecure --basic --ssl-reqd --user "$BASIC_AUTH" \
-                #   --request POST --header 'Content-Type: application/json' \
-                #   --data @- "$ELASTICSEARCH_INDEX_URL" \
-                #     | jq '.'
+                echo "$line" | curl \
+                  --insecure --basic --ssl-reqd --user "$BASIC_AUTH" \
+                  --request POST --header 'Content-Type: application/json' \
+                  --data @- "$ELASTICSEARCH_INDEX_URL" \
+                    | jq '.'
                 echo
               done
 

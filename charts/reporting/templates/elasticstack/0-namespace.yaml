@@ -1,4 +1,6 @@
+{{ if .Values.elasticstack -}}
 apiVersion: v1
 kind: Namespace
 metadata:
   name: {{ .Values.elasticstack.namespace }}
+{{- end}}
