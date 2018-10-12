@@ -44,3 +44,6 @@ REPL:
 kubectl apply --recursive -f ./manifests-minikube/reporter
 kubectl delete --recursive -f ./manifests-minikube/reporter
 ```
+
+
+
