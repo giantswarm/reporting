@@ -23,14 +23,14 @@ spec:
                 echo "$line" | curl \
                   --insecure --basic --ssl-reqd \
                   --request POST --header 'Content-Type: application/json' \
-                  --data @- "$ELASTICSEARCH_INDEX_URL" \
+                  --data @- "$ELASTICSEARCH_INDEX_URL/_doc" \
                     | jq '.'
                 echo
               done
 
             env:
             - name: ELASTICSEARCH_INDEX_URL
-              value: http://elasticsearch.reporting-elasticstack.svc:9200/agent-test1/_doc
+              value: http://elasticsearch.reporting-elasticstack.svc:9200/agent-test1
 
             # - name: RESOURCE_TYPES
             #   value: clusterrolebindings,clusterroles,componentstatuses,cronjobs,customresourcedefinition,daemonsets,deployments,endpoints,horizontalpodautoscalers,ingresses,jobs,limitranges,namespaces,networkpolicies,nodes,persistentvolumeclaims,persistentvolumes,poddisruptionbudgets,podpreset,pods,podsecuritypolicies,podtemplates,replicasets,replicationcontrollers,resourcequotas,rolebindings,roles,serviceaccounts,services,statefulsets,storageclasses

@@ -13,3 +13,8 @@
 #       - "while true; do echo '.'; sleep 2; done"
 #     imagePullPolicy: IfNotPresent
 #     name: toolbox
+#     env:
+#     - name: ELASTICSEARCH_INDEX_URL_AGENT
+#       value: http://elasticsearch.reporting-elasticstack.svc:9200/agent-test1/_doc
+#     - name: ELASTICSEARCH_INDEX_URL_PROCESSING
+#       value: http://elasticsearch.reporting-elasticstack.svc:9200/processing-test1/_doc
