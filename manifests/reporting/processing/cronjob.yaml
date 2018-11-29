@@ -15,11 +15,9 @@ spec:
           restartPolicy: Never
           containers:
           - name: processing
-            image: local/reporting-processing:test1
+            image: quay.io/giantswarm/reporting-processor:9e9a4fa38056eaf92daedc0d86c5897cec164603
             env:
             - name: ELASTICSEARCH_INDEX_URL_AGENT
-              # value: https://elasticsearch.kv7z5.k8s.godsmack.westeurope.azure.gigantic.io/test3/_doc
               value: http://elasticsearch.reporting-elasticstack.svc:9200/agent-test1
             - name: ELASTICSEARCH_INDEX_URL_PROCESSING
-              # value: https://elasticsearch.kv7z5.k8s.godsmack.westeurope.azure.gigantic.io/test3/_doc
               value: http://elasticsearch.reporting-elasticstack.svc:9200/processing-test1
