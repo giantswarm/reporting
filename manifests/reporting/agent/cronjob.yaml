@@ -15,14 +15,13 @@ spec:
           - name: reporting-agent
             image: quay.io/giantswarm/reporting-agent:1184a230a65709228b458b1c086d1a575b78394c
             args:
-            - sh
+            - bash
             - -c
             - |
-              BASIC_AUTH=""
               kubectl get --all-namespaces --export --output=json "$RESOURCE_TYPES" | jq -c '.' | while IFS= read -r line; do
 
                 echo "$line" | curl \
-                  --insecure --basic --ssl-reqd --user "$BASIC_AUTH" \
+                  --insecure --basic --ssl-reqd \
                   --request POST --header 'Content-Type: application/json' \
                   --data @- "$ELASTICSEARCH_INDEX_URL" \
                     | jq '.'
@@ -32,7 +31,7 @@ spec:
             env:
             - name: ELASTICSEARCH_INDEX_URL
               value: http://elasticsearch.reporting-elasticstack.svc:9200/agent-test1/_doc
-              # value: http://elasticsearch.reporter-elasticsearch.svc:9200/test3/_doc
+
             # - name: RESOURCE_TYPES
             #   value: clusterrolebindings,clusterroles,componentstatuses,cronjobs,customresourcedefinition,daemonsets,deployments,endpoints,horizontalpodautoscalers,ingresses,jobs,limitranges,namespaces,networkpolicies,nodes,persistentvolumeclaims,persistentvolumes,poddisruptionbudgets,podpreset,pods,podsecuritypolicies,podtemplates,replicasets,replicationcontrollers,resourcequotas,rolebindings,roles,serviceaccounts,services,statefulsets,storageclasses
             # - name: RESOURCE_TYPES
@@ -41,12 +40,3 @@ spec:
             #   value: daemonsets,deployments,ingresses,namespaces,nodes,pods,replicasets,services,statefulsets
             - name: RESOURCE_TYPES
               value: daemonsets,deployments,ingresses,namespaces,pods,replicasets,services,statefulsets
-
-          #   volumeMounts:
-          #   - name: auth
-          #     mountPath: "/etc/auth"
-          #     readOnly: true
-          # volumes:
-          # - name: auth
-          #   secret:
-          #     secretName: elasticsearch-basic-auth
