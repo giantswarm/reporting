@@ -11,7 +11,7 @@ spec:
     spec:
       template:
         spec:
-          serviceAccountName: reporter
+          serviceAccountName: reporting-agent
           restartPolicy: Never
           containers:
           - name: reporter
