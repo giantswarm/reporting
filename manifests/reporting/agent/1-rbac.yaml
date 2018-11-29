@@ -1,5 +1,11 @@
 ---
-# Source: reporting/templates/agent/cluster-role-binding.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: reporting-agent
+  namespace: reporting-agent
+
+---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
@@ -12,22 +18,23 @@ subjects:
 - kind: ServiceAccount
   name: reporting-agent
   namespace: reporting-agent
+
 --- 
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   name: reporting-agent
 rules:
-  - apiGroups:
-      - ""
-    resources:
-      - daemonsets
-      - deployments
-      - ingresses
-      - namespaces
-      - pods
-      - replicasets
-      - services
-      - statefulsets
-    verbs:
-      - get
+- apiGroups:
+  - ""
+  resources:
+  - daemonsets
+  - deployments
+  - ingresses
+  - namespaces
+  - pods
+  - replicasets
+  - services
+  - statefulsets
+  verbs:
+  - get

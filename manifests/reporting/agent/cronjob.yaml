@@ -1,5 +1,3 @@
----
-# Source: reporting/templates/agent/cronjob.yaml
 apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
@@ -14,39 +12,26 @@ spec:
           serviceAccountName: reporting-agent
           restartPolicy: Never
           containers:
-          - name: reporter
-            image: k8s.gcr.io/hyperkube:v1.11.3
+          - name: reporting-agent
+            image: quay.io/giantswarm/reporting-agent:1184a230a65709228b458b1c086d1a575b78394c
             args:
             - sh
             - -c
             - |
-              # apt update && apt install -y curl
-              # BASIC_AUTH=$(cat /etc/auth/basic-auth | tr -d '\n')
               BASIC_AUTH=""
-
-              # .roles |= if type == "array" then join(",") else . end
-
               kubectl get --all-namespaces --export --output=json "$RESOURCE_TYPES" | jq -c '.' | while IFS= read -r line; do
 
-                echo "$line" > post-data
-                wget \
-                  --server-response \
-                  --header="Content-Type: application/json" \
-                  --post-file "post-data" \
-                  http://server:8080/application2/params2
-
-                # echo "$line" | curl \
-                #   --insecure --basic --ssl-reqd --user "$BASIC_AUTH" \
-                #   --request POST --header 'Content-Type: application/json' \
-                #   --data @- "$ELASTICSEARCH_INDEX_URL" \
-                #     | jq '.'
+                echo "$line" | curl \
+                  --insecure --basic --ssl-reqd --user "$BASIC_AUTH" \
+                  --request POST --header 'Content-Type: application/json' \
+                  --data @- "$ELASTICSEARCH_INDEX_URL" \
+                    | jq '.'
                 echo
               done
 
             env:
             - name: ELASTICSEARCH_INDEX_URL
-              # value: https://elasticsearch.kv7z5.k8s.godsmack.westeurope.azure.gigantic.io/test3/_doc
-              value: http://elasticsearch.reporting-elasticstack.svc:9200/agent-test1
+              value: http://elasticsearch.reporting-elasticstack.svc:9200/agent-test1/_doc
               # value: http://elasticsearch.reporter-elasticsearch.svc:9200/test3/_doc
             # - name: RESOURCE_TYPES
             #   value: clusterrolebindings,clusterroles,componentstatuses,cronjobs,customresourcedefinition,daemonsets,deployments,endpoints,horizontalpodautoscalers,ingresses,jobs,limitranges,namespaces,networkpolicies,nodes,persistentvolumeclaims,persistentvolumes,poddisruptionbudgets,podpreset,pods,podsecuritypolicies,podtemplates,replicasets,replicationcontrollers,resourcequotas,rolebindings,roles,serviceaccounts,services,statefulsets,storageclasses

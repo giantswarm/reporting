@@ -1,5 +1,3 @@
----
-# Source: reporting/templates/agent/0-namespace.yaml
 apiVersion: v1
 kind: Namespace
 metadata:
