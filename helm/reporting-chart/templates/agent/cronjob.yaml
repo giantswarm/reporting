@@ -1,7 +1,7 @@
 apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
-  name: reporter
+  name: reporting-agent
   
 spec:
   schedule: "*/1 * * * *"
@@ -9,7 +9,7 @@ spec:
     spec:
       template:
         spec:
-          serviceAccountName: reporting-agent
+          serviceAccountName: {{ .Release.Namespace }}-reporting-agent
           restartPolicy: Never
           containers:
           - name: reporting-agent
@@ -23,7 +23,7 @@ spec:
                 echo "$line" | curl \
                   --insecure --basic --ssl-reqd \
                   --request POST --header 'Content-Type: application/json' \
-                  --data @- "$ELASTICSEARCH_INDEX_URL/_doc?ttl=3600m" \
+                  --data @- "$ELASTICSEARCH_INDEX_URL/_doc" \
                     | jq '.'
                 echo
               done
