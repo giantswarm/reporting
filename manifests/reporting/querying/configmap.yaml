@@ -5,19 +5,10 @@ metadata:
 data:
   queries.json: |
     {
-      list: [
+      "list": [
         {
-          name: "resources",
-          query: '
-            "bool": { 
-              "must_not": [
-                {
-                "regexp":{
-                    "spec.containers.resources.limits.cpu": ".*"}
-                }
-              ]
-            }
-          '
+          "name": "resources",
+          "query": "{\"bool\":{\"must_not\":[{\"regexp\":{\"spec.containers.resources.limits.cpu\": \".*\"}}]}}"
         }
       ]
     }
