@@ -1,9 +1,8 @@
-{{ if .Values.elasticstack -}}
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: elasticsearch
-  namespace: {{ .Values.elasticstack.namespace }}
+  
 data:
   elasticsearch.yml: |
     cluster.name: reporter-elasticsearch
@@ -23,4 +22,3 @@ data:
     # transport.tcp.port: ${TRANSPORT_PORT}
     # http.port: ${HTTP_PORT}
     network.host: 0.0.0.0
-{{- end}}

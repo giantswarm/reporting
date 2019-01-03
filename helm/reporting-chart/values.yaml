@@ -1,16 +1,28 @@
-
-# namespace-prefix: reporting
-
 elasticstack:
-  namespace: reporting-elasticstack
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch-oss
+    image_tag: 6.4.0
+  kibana:
+    image: docker.elastic.co/kibana/kibana-oss
+    image_tag: 6.4.0
   indexPrefix: reporting-
 
 agent:
-  namespace: reporting-agent
-  image: local/reporting-agent:test1
-  indexUrl: http://elasticsearch.reporting-elasticstack.svc:9200/agent-test1
+  image: quay.io/giantswarm/reporting-agent
+  image_tag: 1184a230a65709228b458b1c086d1a575b78394c
+  index: agent-test1
+  resource_types: pods
+  # eg:
+  #   resource_types: clusterrolebindings,clusterroles,componentstatuses,cronjobs,customresourcedefinition,daemonsets,deployments,endpoints,horizontalpodautoscalers,ingresses,jobs,limitranges,namespaces,networkpolicies,nodes,persistentvolumeclaims,persistentvolumes,poddisruptionbudgets,podpreset,pods,podsecuritypolicies,podtemplates,replicasets,replicationcontrollers,resourcequotas,rolebindings,roles,serviceaccounts,services,statefulsets,storageclasses
+  #   resource_types: daemonsets,deployments,ingresses,jobs,namespaces,nodes,pods,replicasets,replicationcontrollers,services,statefulsets
+  #   resource_types: daemonsets,deployments,ingresses,namespaces,nodes,pods,replicasets,services,statefulsets
 
 processing:
-  namespace: reporting-processing
-  image: local/reporting-processing:test1
-  indexUrl: http://elasticsearch.reporting-elasticstack.svc:9200/processing-test1
+  image: quay.io/giantswarm/reporting-processor
+  image_tag: 0.0.3
+  index: processing-test1
+
+querying:
+  image: pipo02mix/reporting-querying
+  image_tag: 0.0.8
+  index: alerts

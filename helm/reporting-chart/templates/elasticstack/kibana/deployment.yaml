@@ -1,9 +1,7 @@
-{{ if .Values.elasticstack -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: kibana
-  namespace: {{ .Values.elasticstack.namespace }}
   labels:
     app: kibana
 spec:
@@ -20,7 +18,7 @@ spec:
     spec:
       containers:
       - name: kibana
-        image: docker.elastic.co/kibana/kibana-oss:6.4.0
+        image: {{ .Values.elasticstack.kibana.image }}:{{ .Values.elasticstack.kibana.image_tag }}
         resources:
           # need more cpu upon initialization, therefore burstable class
           limits:
@@ -36,4 +34,3 @@ spec:
         - containerPort: 5601
           name: ui
           protocol: TCP
-{{- end}}

@@ -1,0 +1,33 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: querying
+  
+spec:
+  schedule: "*/1 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            app: reporting-querying
+        spec:
+          restartPolicy: Never
+          containers:
+          - name: querying
+            image: {{ .Values.querying.image }}:{{ .Values.querying.image_tag }}
+            env:
+            - name: ELASTICSEARCH_INDEX_URL_ALERTS
+              value: http://elasticsearch.{{ .Release.Namespace }}.svc:9200/{{ .Values.querying.index }}
+            - name: ELASTICSEARCH_INDEX_URL_PROCESSING
+              value: http://elasticsearch.{{ .Release.Namespace }}.svc:9200/{{ .Values.processing.index }}
+            volumeMounts:
+            - name: queries
+              mountPath: /usr/src/app/queries.json
+              subPath: queries.json
+          volumes:
+            - name: queries 
+              configMap:
+                # Provide the name of the ConfigMap containing the files you want
+                # to add to the container
+                name: reporting-queries
