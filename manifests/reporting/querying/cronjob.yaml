@@ -16,7 +16,7 @@ spec:
           restartPolicy: Never
           containers:
           - name: querying
-            image: pipo02mix/reporting-querying:0.0.8
+            image: pipo02mix/reporting-querying:0.0.11
             env:
             - name: ELASTICSEARCH_INDEX_URL_ALERTS
               value: http://elasticsearch.reporting-elasticstack.svc:9200/alerts
