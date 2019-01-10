@@ -1,49 +1,18 @@
-# reporting [WIP]
+# Reporting tool
 
-Snapshot cluster manifests in a history to allow inspection for reporting.
+The reporting tool is a collection of different components to discover bad practices in a Kubernetes cluster(s).
 
-```bash
-minikube start --bootstrapper kubeadm --kubernetes-version "v1.11.2" --memory 4096
-```
+There are three main components:
 
-```bash
-kubectl apply -f ./manifests-minikube/elasticstack
+- Agent: It lives in the target cluster to forward the pod definition to a external database.
 
-minikube service -n reporter-elasticstack kibana
+- Processor: It is in charge of sanitize and enhance the ingested documents from targeted clusters. It add some metada to make the alerting process easier.
 
-# elasticsearch_url=$(minikube service --url -n reporter-elasticsearch elasticsearch)
-set elasticsearch_url (minikube service --url -n reporter-elasticsearch elasticsearch)
-
-curl --request DELETE "$elasticsearch_url/test3"
-curl --request PUT "$elasticsearch_url/test3" --header 'Content-Type: application/json' -d '
-{
-  "settings": {
-    "index.mapping.coerce": true,
-    "index.mapping.ignore_malformed": true
-  },
-  "mappings": {
-    "_doc": {
-      "properties": {
-        "items": {
-          "type": "nested",
-          "properties": {
-            "spec": {
-              "enabled": false
-            }
-          }
-        }
-      }
-    }
-  }
-}'
-```
-
-REPL:
-
-```bash
-kubectl apply --recursive -f ./manifests-minikube/reporter
-kubectl delete --recursive -f ./manifests-minikube/reporter
-```
+- Querying: It checks the processed documents looking for bad practices in the pod definitions (no limits, secrets as envs, ...). All found documents that fulfill the conditions are saved in a new DB in order to have an up to date index with all alerts.
 
 
+The processor and querying components can run in the same cluster on the agent or in a differnet one, but the Elastic Search used to save the data should be accessible from the agent component. 
 
+Diagram
+
+https://github.com/giantswarm/reporting/raw/master/img/architecture.jpg
