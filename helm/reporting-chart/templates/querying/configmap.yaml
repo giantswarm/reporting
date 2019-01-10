@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "querying.name" . }}
+  
+data:
+  queries.json: |
+    {
+      "list": [
+        {
+          "name": "resources-limit",
+          "severity": "notify",
+          "description": "Resource limit has to be defined by container to ensure QoS and help with scheduling and eviction. https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/#resource-requests-and-limits-of-pod-and-container",
+          "query": "{\"bool\":{\"must_not\":[{\"regexp\":{\"spec.containers.resources.limits.cpu\": \".*\"}}]}}"
+        },
+        {
+          "name": "static-pod",
+          "severity": "alert",
+          "description": "Pods are building blocks and should have a backing controller. https://kubernetes.io/docs/concepts/workloads/pods/pod-overview/#pods-and-controllers",
+          "query": "{\"bool\":{\"must_not\":[{\"term\":{\"metadata.ownerReferences.controller\": \"true\"}},{\"regexp\":{\"metadata.name\":\"k8s.*\"}}]}}"
+        },
+        {
+          "name": "liveness-probe",
+          "severity": "notify",
+          "description": "Liveness probes are really important in order to not lose any request and help Kubernetes to discover the state of your apps. https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/#define-a-liveness-command",
+          "query": "{\"constant_score\":{\"filter\":{\"bool\":{\"must_not\":{\"exists\":{\"field\":\"spec.containers.livenessProbe\"}}}}}}"
+        }
+      ]
+    }

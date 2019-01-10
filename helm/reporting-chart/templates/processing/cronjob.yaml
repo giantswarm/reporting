@@ -1,23 +1,20 @@
 apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
-  name: processing
-  namespace: {{ .Values.processing.namespace }}
+  name: {{ template "processing.name" . }}
+  
 spec:
   schedule: "*/1 * * * *"
   jobTemplate:
     spec:
       template:
         spec:
-          # serviceAccountName: reporter
           restartPolicy: Never
           containers:
           - name: processing
-            image: {{ .Values.processing.image }}
+            image: {{ .Values.processing.image }}:{{ .Values.processing.image_tag }}
             env:
             - name: ELASTICSEARCH_INDEX_URL_AGENT
-              # value: https://elasticsearch.kv7z5.k8s.godsmack.westeurope.azure.gigantic.io/test3/_doc
-              value: {{ .Values.agent.indexUrl }}
+              value: http://{{ template "elasticsearch.name" . }}.{{ .Release.Namespace }}.svc:9200/{{ .Values.agent.index }}
             - name: ELASTICSEARCH_INDEX_URL_PROCESSING
-              # value: https://elasticsearch.kv7z5.k8s.godsmack.westeurope.azure.gigantic.io/test3/_doc
-              value: {{ .Values.processing.indexUrl }}
+              value: http://{{ template "elasticsearch.name" . }}.{{ .Release.Namespace }}.svc:9200/{{ .Values.processing.index }}

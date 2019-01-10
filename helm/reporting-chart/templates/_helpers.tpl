@@ -30,3 +30,23 @@ Create chart name and version as used by the chart label.
 {{- define "reporting.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
+
+{{- define "agent.name" -}}
+{{- printf "%s-agent" (include "reporting.fullname" .) -}}
+{{- end -}}
+
+{{- define "processing.name" -}}
+{{- printf "%s-processing" (include "reporting.fullname" .) -}}
+{{- end -}}
+
+{{- define "querying.name" -}}
+{{- printf "%s-querying" (include "reporting.fullname" .) -}}
+{{- end -}}
+
+{{- define "elasticsearch.name" -}}
+{{- printf "%s-elasticsearch" (include "reporting.fullname" .) -}}
+{{- end -}}
+
+{{- define "kibana.name" -}}
+{{- printf "%s-kibana" (include "reporting.fullname" .) -}}
+{{- end -}}
