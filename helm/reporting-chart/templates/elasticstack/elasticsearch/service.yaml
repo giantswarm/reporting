@@ -1,9 +1,7 @@
-{{ if .Values.elasticstack -}}
 apiVersion: v1
 kind: Service
 metadata:
-  name: elasticsearch
-  namespace: {{ .Values.elasticstack.namespace }}
+  name: {{ template "elasticsearch.name" . }}
   labels:
     app: elasticsearch
 spec:
@@ -15,4 +13,3 @@ spec:
     targetPort: db
   selector:
     app: elasticsearch
-{{- end}}

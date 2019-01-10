@@ -1,51 +1,7 @@
-{{ if .Values.elasticstack -}}
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: elasticsearch
-  namespace: {{ .Values.elasticstack.namespace }}
-  labels:
-    app: elasticsearch
----
-kind: ClusterRole
-apiVersion: rbac.authorization.k8s.io/v1
-metadata:
-  name: elasticsearch
-  namespace: {{ .Values.elasticstack.namespace }}
-  labels:
-    app: elasticsearch
-rules:
-- apiGroups:
-  - ""
-  resources:
-  - "services"
-  - "namespaces"
-  - "endpoints"
-  verbs:
-  - "get"
----
-kind: ClusterRoleBinding
-apiVersion: rbac.authorization.k8s.io/v1
-metadata:
-  namespace: {{ .Values.elasticstack.namespace }}
-  name: elasticsearch
-  labels:
-    app: elasticsearch
-subjects:
-- kind: ServiceAccount
-  name: elasticsearch
-  namespace: {{ .Values.elasticstack.namespace }}
-  apiGroup: ""
-roleRef:
-  kind: ClusterRole
-  name: elasticsearch
-  apiGroup: ""
----
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: elasticsearch
-  namespace: {{ .Values.elasticstack.namespace }}
+  name: {{ template "elasticsearch.name" . }}
   labels:
     app: elasticsearch
 spec:
@@ -59,12 +15,9 @@ spec:
       labels:
         app: elasticsearch
     spec:
-      serviceAccountName: elasticsearch
+      serviceAccountName: {{ template "elasticsearch.name" . }}
       containers:
-      - image: docker.elastic.co/elasticsearch/elasticsearch-oss:6.4.0
-      # - image: k8s.gcr.io/elasticsearch:v6.2.5
-        # to test if version exists goto
-        # https://k8s.gcr.io/v2/elasticsearch/manifests/v6.2.5
+      - image: {{ .Values.elasticstack.elasticsearch.image }}:{{ .Values.elasticstack.elasticsearch.image_tag }}
         name: elasticsearch
         resources:
           # need more cpu upon initialization, therefore burstable class
@@ -101,7 +54,7 @@ spec:
         emptyDir: {}
       - name: config
         configMap:
-          name: elasticsearch
+          name: {{ template "elasticsearch.name" . }}
       # Elasticsearch requires vm.max_map_count to be at least 262144.
       # If your OS already sets up this number to a higher value, feel free
       # to remove this init container.
@@ -111,4 +64,3 @@ spec:
         name: elasticsearch-logging-init
         securityContext:
           privileged: true
-{{- end}}

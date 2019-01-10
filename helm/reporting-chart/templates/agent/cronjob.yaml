@@ -1,66 +1,34 @@
 apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
-  name: reporter
-  namespace: {{ .Values.agent.namespace }}
+  name: {{ template "agent.name" . }}
 spec:
   schedule: "*/1 * * * *"
   jobTemplate:
     spec:
       template:
         spec:
-          serviceAccountName: reporter
+          serviceAccountName: {{ template "agent.name" . }}
           restartPolicy: Never
           containers:
-          - name: reporter
-            # image: k8s.gcr.io/hyperkube:v1.11.3
-            image: {{ .Values.processing.image }}
+          - name: reporting-agent
+            image: {{ .Values.agent.image }}:{{ .Values.agent.image_tag }}
             args:
-            - sh
+            - bash
             - -c
             - |
-              # apt update && apt install -y curl
-              # BASIC_AUTH=$(cat /etc/auth/basic-auth | tr -d '\n')
-              BASIC_AUTH=""
-
-              # .roles |= if type == "array" then join(",") else . end
-
-              kubectl get --all-namespaces --export --output=json "$RESOURCE_TYPES" | jq -c '.' | while IFS= read -r line; do
-
-                # echo "$line" > post-data
-                # wget \
-                #   --server-response \
-                #   --header="Content-Type: application/json" \
-                #   --post-file "post-data" \
-                #   http://server:8080/application2/params2
+              kubectl get --all-namespaces --export --output=json "$RESOURCE_TYPES" | jq -c '.items[]' | while IFS= read -r line; do
 
                 echo "$line" | curl \
-                  --insecure --basic --ssl-reqd --user "$BASIC_AUTH" \
+                  --insecure --basic --ssl-reqd \
                   --request POST --header 'Content-Type: application/json' \
-                  --data @- "$ELASTICSEARCH_INDEX_URL" \
+                  --data @- "$ELASTICSEARCH_INDEX_URL/_doc" \
                     | jq '.'
                 echo
               done
 
             env:
             - name: ELASTICSEARCH_INDEX_URL
-              # value: https://elasticsearch.kv7z5.k8s.godsmack.westeurope.azure.gigantic.io/test3/_doc
-              value: {{ .Values.agent.indexUrl }}
-              # value: http://elasticsearch.reporter-elasticsearch.svc:9200/test3/_doc
-            # - name: RESOURCE_TYPES
-            #   value: clusterrolebindings,clusterroles,componentstatuses,cronjobs,customresourcedefinition,daemonsets,deployments,endpoints,horizontalpodautoscalers,ingresses,jobs,limitranges,namespaces,networkpolicies,nodes,persistentvolumeclaims,persistentvolumes,poddisruptionbudgets,podpreset,pods,podsecuritypolicies,podtemplates,replicasets,replicationcontrollers,resourcequotas,rolebindings,roles,serviceaccounts,services,statefulsets,storageclasses
-            # - name: RESOURCE_TYPES
-            #   value: daemonsets,deployments,ingresses,jobs,namespaces,nodes,pods,replicasets,replicationcontrollers,services,statefulsets
-            # - name: RESOURCE_TYPES
-            #   value: daemonsets,deployments,ingresses,namespaces,nodes,pods,replicasets,services,statefulsets
+              value: http://{{ template "elasticsearch.name" . }}.{{ .Release.Namespace }}.svc:9200/{{ .Values.agent.index }}
             - name: RESOURCE_TYPES
-              value: daemonsets,deployments,ingresses,namespaces,pods,replicasets,services,statefulsets
-
-          #   volumeMounts:
-          #   - name: auth
-          #     mountPath: "/etc/auth"
-          #     readOnly: true
-          # volumes:
-          # - name: auth
-          #   secret:
-          #     secretName: elasticsearch-basic-auth
+              value: {{ .Values.agent.resource_types }}
