@@ -1,8 +1,7 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: elasticsearch
-  
+  name: {{ template "elasticsearch.name" . }}
   labels:
     app: elasticsearch
 spec:
@@ -16,7 +15,7 @@ spec:
       labels:
         app: elasticsearch
     spec:
-      serviceAccountName: {{ .Release.Namespace }}-elasticsearch
+      serviceAccountName: {{ template "elasticsearch.name" . }}
       containers:
       - image: {{ .Values.elasticstack.elasticsearch.image }}:{{ .Values.elasticstack.elasticsearch.image_tag }}
         name: elasticsearch
@@ -55,7 +54,7 @@ spec:
         emptyDir: {}
       - name: config
         configMap:
-          name: elasticsearch
+          name: {{ template "elasticsearch.name" . }}
       # Elasticsearch requires vm.max_map_count to be at least 262144.
       # If your OS already sets up this number to a higher value, feel free
       # to remove this init container.

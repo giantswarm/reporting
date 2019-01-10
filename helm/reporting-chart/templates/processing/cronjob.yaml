@@ -1,7 +1,7 @@
 apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
-  name: processing
+  name: {{ template "processing.name" . }}
   
 spec:
   schedule: "*/1 * * * *"
@@ -15,6 +15,6 @@ spec:
             image: {{ .Values.processing.image }}:{{ .Values.processing.image_tag }}
             env:
             - name: ELASTICSEARCH_INDEX_URL_AGENT
-              value: http://elasticsearch.{{ .Release.Namespace }}.svc:9200/{{ .Values.agent.index }}
+              value: http://{{ template "elasticsearch.name" . }}.{{ .Release.Namespace }}.svc:9200/{{ .Values.agent.index }}
             - name: ELASTICSEARCH_INDEX_URL_PROCESSING
-              value: http://elasticsearch.{{ .Release.Namespace }}.svc:9200/{{ .Values.processing.index }}
+              value: http://{{ template "elasticsearch.name" . }}.{{ .Release.Namespace }}.svc:9200/{{ .Values.processing.index }}

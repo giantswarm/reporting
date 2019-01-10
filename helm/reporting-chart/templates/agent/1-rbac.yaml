@@ -1,19 +1,19 @@
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: {{ .Release.Namespace }}-reporting-agent
+  name: {{ template "agent.name" . }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: {{ .Release.Namespace }}-reporting-agent
+  name: {{ template "agent.name" . }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
   name: view
 subjects:
 - kind: ServiceAccount
-  name: {{ .Release.Namespace }}-reporting-agent
+  name: {{ template "agent.name" . }}
   namespace: {{ .Release.Namespace }}
   
 
@@ -21,7 +21,7 @@ subjects:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: {{ .Release.Namespace }}-reporting-agent
+  name: {{ template "agent.name" . }}
 rules:
 - apiGroups:
   - ""

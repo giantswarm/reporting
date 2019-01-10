@@ -1,8 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: elasticsearch
-  
+  name: {{ template "elasticsearch.name" . }}
 data:
   elasticsearch.yml: |
     cluster.name: reporter-elasticsearch

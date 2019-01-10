@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: reporting-queries
+  name: {{ template "querying.name" . }}
   
 data:
   queries.json: |

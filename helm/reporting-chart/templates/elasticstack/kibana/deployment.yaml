@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: kibana
+  name: {{ template "kibana.name" . }}
   labels:
     app: kibana
 spec:
@@ -27,7 +27,7 @@ spec:
             cpu: 100m
         env:
           - name: ELASTICSEARCH_URL
-            value: http://elasticsearch:9200
+            value: http://{{ template "elasticsearch.name" . }}:9200
           # - name: SERVER_BASEPATH
           #   value: /api/v1/namespaces/kube-system/services/kibana-logging/proxy
         ports:

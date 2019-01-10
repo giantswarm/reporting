@@ -1,15 +1,14 @@
 apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
-  name: reporting-agent
-  
+  name: {{ template "agent.name" . }}
 spec:
   schedule: "*/1 * * * *"
   jobTemplate:
     spec:
       template:
         spec:
-          serviceAccountName: {{ .Release.Namespace }}-reporting-agent
+          serviceAccountName: {{ template "agent.name" . }}
           restartPolicy: Never
           containers:
           - name: reporting-agent
@@ -30,6 +29,6 @@ spec:
 
             env:
             - name: ELASTICSEARCH_INDEX_URL
-              value: http://elasticsearch.{{ .Release.Namespace }}.svc:9200/{{ .Values.agent.index }}
+              value: http://{{ template "elasticsearch.name" . }}.{{ .Release.Namespace }}.svc:9200/{{ .Values.agent.index }}
             - name: RESOURCE_TYPES
               value: {{ .Values.agent.resource_types }}
