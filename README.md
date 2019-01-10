@@ -15,4 +15,4 @@ The processor and querying components can run in the same cluster on the agent o
 
 Diagram
 
-https://github.com/giantswarm/reporting/raw/master/img/architecture.jpg
+![](https://github.com/giantswarm/reporting/raw/master/img/architecture.jpg)
