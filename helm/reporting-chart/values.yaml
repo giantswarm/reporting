@@ -9,6 +9,5 @@ elasticstack:
 
 querying:
   image: pipo02mix/reporting-querying
-  image_tag: 0.0.8
+  image_tag: 0.0.11
   index: alerts
-  processor_index: processor-test1
