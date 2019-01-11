@@ -15,6 +15,6 @@ spec:
             image: {{ .Values.processing.image }}:{{ .Values.processing.image_tag }}
             env:
             - name: ELASTICSEARCH_INDEX_URL_AGENT
-              value: http://{{ template "elasticsearch.name" . }}.{{ .Release.Namespace }}.svc:9200/{{ .Values.agent.index }}
+              value: http://{{ template "elasticsearch.name" . }}.{{ .Release.Namespace }}.svc:9200/{{ .Values.processing.agent_index }}
             - name: ELASTICSEARCH_INDEX_URL_PROCESSING
               value: http://{{ template "elasticsearch.name" . }}.{{ .Release.Namespace }}.svc:9200/{{ .Values.processing.index }}

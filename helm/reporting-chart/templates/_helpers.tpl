@@ -31,10 +31,6 @@ Create chart name and version as used by the chart label.
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
-{{- define "agent.name" -}}
-{{- printf "%s-agent" (include "reporting.fullname" .) -}}
-{{- end -}}
-
 {{- define "processing.name" -}}
 {{- printf "%s-processing" (include "reporting.fullname" .) -}}
 {{- end -}}
