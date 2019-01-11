@@ -6,8 +6,3 @@ elasticstack:
     image: docker.elastic.co/kibana/kibana-oss
     image_tag: 6.4.0
   indexPrefix: reporting-
-
-querying:
-  image: pipo02mix/reporting-querying
-  image_tag: 0.0.11
-  index: alerts
