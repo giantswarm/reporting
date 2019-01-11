@@ -7,13 +7,8 @@ elasticstack:
     image_tag: 6.4.0
   indexPrefix: reporting-
 
-processing:
-  image: quay.io/giantswarm/reporting-processor
-  image_tag: 0.0.3
-  index: processing-test1
-  agent_index: agent-test1
-
 querying:
   image: pipo02mix/reporting-querying
   image_tag: 0.0.8
   index: alerts
+  processor_index: processor-test1
