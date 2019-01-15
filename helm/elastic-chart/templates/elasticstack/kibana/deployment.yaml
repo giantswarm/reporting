@@ -27,7 +27,7 @@ spec:
             cpu: 100m
         env:
           - name: ELASTICSEARCH_URL
-            value: http://{{ template "elasticsearch.name" . }}:9200
+            value: http://{{ .Values.elasticstack.elasticsearch.service_name }}:9200
           # - name: SERVER_BASEPATH
           #   value: /api/v1/namespaces/kube-system/services/kibana-logging/proxy
         ports:
