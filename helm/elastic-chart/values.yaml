@@ -2,6 +2,7 @@ elasticstack:
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch-oss
     image_tag: 6.4.0
+    service_name: elasticsearch
   kibana:
     image: docker.elastic.co/kibana/kibana-oss
     image_tag: 6.4.0
