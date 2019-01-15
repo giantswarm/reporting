@@ -1,0 +1,9 @@
+[submodule "reporting-agent"]
+	path = reporting-agent
+	url = https://github.com/giantswarm/reporting-agent.git
+[submodule "reporting-processor"]
+	path = reporting-processor
+	url = https://github.com/giantswarm/reporting-processor.git
+[submodule "reporting-querying"]
+	path = reporting-querying
+	url = https://github.com/giantswarm/reporting-querying.git
