@@ -21,38 +21,38 @@ Diagram
 
 ### Using git
 
-#### Install Elasticsearch & Kibana
-
 ```
-git clone https://github.com/giantswarm/reporting.git
-helm install ./reporting/helm/elastic-chart  -n reporting-elastic --namespace reporting
-rm -rf reporting
-```
+# Clone Reposotory recusrively to get submodules
 
-#### Install Agent
+git clone --recursive https://github.com/giantswarm/reporting.git 
 
-```
-git clone https://github.com/giantswarm/reporting-agent.git
+cd reporting
+
+# Install Elastic stack
+helm install ./helm/elastic-chart  -n reporting-elastic --namespace reporting
+
+# Install Agent
+
 helm install ./reporting-agent/helm/reporting-agent-chart  -n reporting-agent --namespace reporting
-rm -rf reporting-agent
-```
 
-#### Install Processor
+# Install Processor
 
-```
-git clone https://github.com/giantswarm/reporting-processor.git
 helm install ./reporting-processor/helm/reporting-processor-chart  -n reporting-processor --namespace reporting
-rm -rf reporting-processor
-```
 
-#### Install Querying
+# Install Querying
 
-```
-git clone https://github.com/giantswarm/reporting-querying.git
 helm install ./reporting-querying/helm/reporting-querying-chart  -n reporting-querying --namespace reporting
-rm -rf reporting-querying
 ```
 
+#### Check data in Kibana
+
+```
+kubectl -n reporting port-forward svc/reporting-elastic-reporting-chart-kibana 5601
+```
+
+- Open http://localhost:5601
+- Add `alerts` index
+- Check `Discover` for data
 
 
 #### Tear Down everything
