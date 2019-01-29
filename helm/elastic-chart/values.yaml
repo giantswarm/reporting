@@ -6,4 +6,5 @@ elasticstack:
   kibana:
     image: docker.elastic.co/kibana/kibana-oss
     image_tag: 6.4.0
-  indexPrefix: reporting-
+  indexPrefix: gs-
+  provider: aws
