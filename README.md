@@ -4,14 +4,14 @@ The reporting tool is a collection of different components to discover bad pract
 
 There are three main components:
 
-- Agent: It lives in the target cluster to forward the pod definition to a external database.
+- Agent: It lives in the target cluster to forward the pod (or other resources) definitions to a external database (for now only Elasticsearch).
 
-- Processor: It is in charge of sanitize and enhance the ingested documents from targeted clusters. It add some metada to make the alerting process easier.
+- Processor: It is in charge of sanitize and enhance the ingested documents from targeted clusters. It adds some metadata to make the alerting process easier.
 
-- Querying: It checks the processed documents looking for bad practices in the pod definitions (no limits, secrets as envs, ...). All found documents that fulfill the conditions are saved in a new DB in order to have an up to date index with all alerts.
+- Querying: It checks the processed documents looking for bad practices in the pod definitions (no limits, secrets as envs, ...). All found resources that match the alerting rules are saved in a new index to be able to see them overtime. 
 
 
-The processor and querying components can run in the same cluster on the agent or in a differnet one, but the Elastic Search used to save the data should be accessible from the agent component. 
+The processor and querying components can run in the same cluster than the agent or in a differnet one. Elasticsearch can be running wherever as soon as it is accessible to the agent. There is no authentication or authorization method provided, so it has to be done apart. 
 
 Diagram
 
