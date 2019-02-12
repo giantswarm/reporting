@@ -19,6 +19,8 @@ Diagram
 
 ## Installation
 
+Be aware the different components run as cron jobs and they have some default schedule configuration to run once every day.
+
 ### Using git
 
 ```
@@ -44,16 +46,24 @@ helm install ./reporting-processor/helm/reporting-processor-chart  -n reporting-
 helm install ./reporting-querying/helm/reporting-querying-chart  -n reporting-querying --namespace reporting
 ```
 
-#### Check data in Kibana
+## Visualizing results
+
+### Check data in Grafana
+
+In the `dashboards` folder there is a example how to get a new simple table layout to display the alerts. It can be sort by cluster or date. Also results can be exported as `csv` format.
+
+In order to see data in the dashboard you need to add ElasticSearch as data source. And verify the dashboard source has the correct name.
+
+### Check data in Kibana
 
 ```
-kubectl -n reporting port-forward svc/reporting-elastic-reporting-chart-kibana 5601
+export POD_NAME=$(kubectl get pods --namespace reporting -l "app=kibana" -o jsonpath="{.items[0].metadata.name}")
+kubectl -n reporting port-forward $POD_NAME 5601:5601 > /dev/null 2>&1 &
 ```
 
 - Open http://localhost:5601
-- Add `alerts` index
+- Add `gs-alerts` index using `timestamp` as time filter
 - Check `Discover` for data
-
 
 #### Tear Down everything
 
@@ -69,7 +79,7 @@ kubectl -n reporting delete jobs --all
 
 ```
 git clone https://github.com/giantswarm/reporting.git
-helm-28 install ./reporting/helm/elastic-chart  -n reporting-elastic --namespace reporting
+helm install ./reporting/helm/elastic-chart  -n reporting-elastic --namespace reporting
 rm -rf reporting
 ```
 
